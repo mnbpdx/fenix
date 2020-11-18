@@ -105,24 +105,24 @@ class SettingsBasicsTest {
         }
     }
 
-    @Ignore("This test works locally, fails on firebase. https://github.com/mozilla-mobile/fenix/issues/8174")
-    @Test
-    fun toggleSearchSuggestions() {
-        // Goes through the settings and changes the search suggestion toggle, then verifies it changes.
-        homeScreen {
-        }.openNavigationToolbar {
-            verifySearchSuggestionsAreMoreThan(1, "mozilla")
-        }.goBack {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSearchSubMenu {
-            disableShowSearchSuggestions()
-        }.goBack {
-        }.goBack {
-        }.openNavigationToolbar {
-            verifySearchSuggestionsAreEqualTo(0, "mozilla")
-        }
-    }
+//    @Ignore("This test works locally, fails on firebase. https://github.com/mozilla-mobile/fenix/issues/8174")
+//    @Test
+//    fun toggleSearchSuggestions() {
+//        // Goes through the settings and changes the search suggestion toggle, then verifies it changes.
+//        homeScreen {
+//        }.openNavigationToolbar {
+//            verifySearchSuggestionsAreMoreThan(1, "mozilla")
+//        }.goBack {
+//        }.openThreeDotMenu {
+//        }.openSettings {
+//        }.openSearchSubMenu {
+//            disableShowSearchSuggestions()
+//        }.goBack {
+//        }.goBack {
+//        }.openNavigationToolbar {
+//            verifySearchSuggestionsAreEqualTo(0, "mozilla")
+//        }
+//    }
 
     @Test
     fun toggleShowVisitedSitesAndBookmarks() {

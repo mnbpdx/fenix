@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
+import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.action.ViewActions.replaceText
@@ -25,12 +26,14 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import kotlinx.android.synthetic.main.fragment_search_dialog.view.*
 import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.not
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.assertions.AwesomeBarAssertion.Companion.suggestionsAreEqualTo
@@ -43,15 +46,19 @@ import org.mozilla.fenix.helpers.ext.waitNotNull
  */
 class NavigationToolbarRobot {
 
-    fun verifySearchSuggestionsAreMoreThan(suggestionSize: Int, searchTerm: String) =
-        assertSuggestionsAreMoreThan(suggestionSize, searchTerm)
+    fun verifySearchSuggestionsAreMoreThan(suggestionSize: Int) {
+        mDevice.findObject(UiSelector().resourceId("awesome_bar")).waitForExists(waitingTime)
+        assertSuggestionsAreMoreThan(suggestionSize)
+    }
 
-    fun verifySearchSuggestionsAreEqualTo(suggestionSize: Int, searchTerm: String) =
-        assertSuggestionsAreEqualTo(suggestionSize, searchTerm)
+    fun verifySearchSuggestionsAreEqualTo(suggestionSize: Int) =
+        assertSuggestionsAreEqualTo(suggestionSize)
 
     fun verifyNoHistoryBookmarks() = assertNoHistoryBookmarks()
 
     fun verifyTabButtonShortcutMenuItems() = assertTabButtonShortcutMenuItems()
+
+    fun typeSearchTerm(searchTerm: String): ViewInteraction = awesomeBar().perform(typeText(searchTerm))
 
     class Transition {
 
@@ -246,18 +253,11 @@ fun clickUrlbar(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
     return SearchRobot.Transition()
 }
 
-private fun assertSuggestionsAreEqualTo(suggestionSize: Int, searchTerm: String) {
-    mDevice.waitForIdle()
-    awesomeBar().perform(typeText(searchTerm))
-
-    mDevice.waitForIdle()
+private fun assertSuggestionsAreEqualTo(suggestionSize: Int) {
     onView(withId(R.id.awesome_bar)).check(suggestionsAreEqualTo(suggestionSize))
 }
 
-private fun assertSuggestionsAreMoreThan(suggestionSize: Int, searchTerm: String) {
-    mDevice.waitForIdle()
-    awesomeBar().perform(typeText(searchTerm))
-
+private fun assertSuggestionsAreMoreThan(suggestionSize: Int) {
     mDevice.waitForIdle()
     onView(withId(R.id.awesome_bar)).check(suggestionsAreGreaterThan(suggestionSize))
 }

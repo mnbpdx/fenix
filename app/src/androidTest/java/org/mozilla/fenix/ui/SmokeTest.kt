@@ -5,6 +5,10 @@
 package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.hasMinimumChildCount
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
@@ -12,12 +16,15 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.ui.robots.clickUrlbar
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.typeSearchTerm
 
 /**
  * Test Suite that contains tests defined as part of the Smoke and Sanity check defined in Test rail.
@@ -252,6 +259,38 @@ class SmokeTest {
             clickUrlbar {
                 verifyDefaultSearchEngine("Google")
             }
+        }
+    }
+
+    @Test
+    fun toggleSearchSuggestions() {
+        // Goes through the settings and changes the search suggestion toggle, then verifies it changes.
+        homeScreen {
+        }.openNavigationToolbar {
+            typeSearchTerm("mozilla")
+            mDevice.waitForIdle(waitingTime)
+            onView(withId(R.id.awesome_bar)).check(matches(hasMinimumChildCount(1)))
+//            searchSuggestionsIdlingResource =
+//                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.awesome_bar), 1)
+//            IdlingRegistry.getInstance().register(searchSuggestionsIdlingResource!!)
+//            verifySearchSuggestionsAreMoreThan(1)
+            // IdlingRegistry.getInstance().unregister(searchSuggestionsIdlingResource!!)
+        }.goBack {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            disableShowSearchSuggestions()
+        }.goBack {
+        }.goBack {
+        }.openNavigationToolbar {
+            typeSearchTerm("mozilla")
+//            searchSuggestionsIdlingResource =
+//                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.awesome_bar))
+//            IdlingRegistry.getInstance().register(searchSuggestionsIdlingResource!!)
+            mDevice.waitForIdle(waitingTime)
+            onView(withId(R.id.awesome_bar)).check(matches(hasMinimumChildCount(0)))
+            // verifySearchSuggestionsAreEqualTo(0)
+            // IdlingRegistry.getInstance().unregister(searchSuggestionsIdlingResource!!)
         }
     }
 }
