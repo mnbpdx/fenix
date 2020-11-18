@@ -24,7 +24,6 @@ import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.ui.robots.clickUrlbar
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
-import org.mozilla.fenix.ui.robots.typeSearchTerm
 
 /**
  * Test Suite that contains tests defined as part of the Smoke and Sanity check defined in Test rail.
