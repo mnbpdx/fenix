@@ -8,12 +8,14 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.lib.crash.service.CrashReporterService
 import mozilla.components.lib.crash.service.GleanCrashReporterService
 import mozilla.components.lib.crash.service.MozillaSocorroService
 import mozilla.components.lib.crash.service.SentryService
 import mozilla.components.service.nimbus.Nimbus
+import mozilla.components.service.nimbus.NimbusServerSettings
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -102,7 +104,11 @@ class Analytics(
     }
 
     val experiments by lazyMonitored {
-        Nimbus(context, server = null).apply {
+        val url: String? = BuildConfig.NIMBUS_ENDPOINT
+        val serverSettings = url?.let {
+            NimbusServerSettings(url = Uri.parse(it))
+        }
+        Nimbus(context, serverSettings).apply {
             if (FeatureFlags.nimbusExperiments) {
                 initialize()
                 // Global opt out state is stored in Nimbus, and shouldn't be toggled to `true`
